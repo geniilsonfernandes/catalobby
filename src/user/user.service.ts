@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.input';
@@ -21,7 +25,7 @@ export class UserService {
     const userExists = await this.userRepository.findOne({ where: { id } });
 
     if (!userExists) {
-      throw new InternalServerErrorException('Este usuário não existe');
+      throw new NotFoundException('Este usuário não existe');
     }
 
     return userExists;
@@ -44,21 +48,11 @@ export class UserService {
     const user = this.userRepository.create(data);
     const userSaved = await this.userRepository.save(user);
 
-    if (!userSaved) {
-      throw new InternalServerErrorException(
-        'Não foi possiível criar o usuário, tente novamente',
-      );
-    }
-
     return userSaved;
   }
 
   async updateUser(id: string, data: Partial<User>): Promise<User> {
     const userExists = await this.findUserById(id);
-
-    if (!userExists) {
-      throw new InternalServerErrorException('Este usuário não existe');
-    }
 
     const userUpdated = await this.userRepository.save({
       ...userExists,
@@ -70,10 +64,6 @@ export class UserService {
 
   async deleteUser(id: string): Promise<User> {
     const userExists = await this.findUserById(id);
-
-    if (!userExists) {
-      throw new InternalServerErrorException('Este usuário não existe');
-    }
 
     const userDeleted = await this.userRepository.remove(userExists);
 
