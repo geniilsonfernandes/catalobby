@@ -4,6 +4,8 @@ import { Repository } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.input';
 import { User } from './user.entity';
 
+import * as bcrypt from 'bcrypt';
+
 @Injectable()
 export class UserService {
   constructor(
@@ -33,6 +35,11 @@ export class UserService {
     if (userExists) {
       throw new InternalServerErrorException('Este usuário ja existe');
     }
+
+    const salt = await bcrypt.genSalt();
+    const passwordHash = await bcrypt.hash(data.password, salt);
+
+    data.password = passwordHash;
 
     const user = this.userRepository.create(data);
     const userSaved = await this.userRepository.save(user);
