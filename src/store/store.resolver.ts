@@ -2,8 +2,8 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GqlAuthGuard } from 'src/auth/auth.guard';
 import { DeleteStore } from './common/CustomResponse';
-import { StoreCreateInput } from './dto/store.input';
-import { StoreUpdateInput } from './dto/update-store.input';
+import { CreateStoreInput } from './dto/store.input';
+import { UpdateStoreInput } from './dto/update-store.input';
 import { Store } from './store.entity';
 import { StoreService } from './store.service';
 
@@ -21,7 +21,7 @@ export class StoreResolver {
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Store, { name: 'createStore' })
-  async createStore(@Args('data') data: StoreCreateInput): Promise<Store> {
+  async createStore(@Args('data') data: CreateStoreInput): Promise<Store> {
     return this.storeService.createStore(data);
   }
 
@@ -29,7 +29,7 @@ export class StoreResolver {
   @Mutation(() => Store, { name: 'updateStore' })
   async updateStore(
     @Args('id') id: string,
-    @Args('data') data: StoreUpdateInput,
+    @Args('data') data: UpdateStoreInput,
   ): Promise<Store> {
     return this.storeService.updateStore(id, data);
   }

@@ -41,18 +41,24 @@ type CustomResponse {
 }
 
 type Query {
-  users: [User!]!
   user(id: String!): User
   store(id: String!): Store
 }
 
 type Mutation {
+  createUser(data: CreateUserInput!): User!
   updateUser(id: String!, data: UpdateUserInput!): User!
   deleteUser(id: String!): CustomResponse!
   login(data: AuthInput!): AuthType!
-  createStore(data: StoreCreateInput!): Store!
-  updateStore(id: String!, data: StoreUpdateInput!): Store!
+  createStore(data: CreateStoreInput!): Store!
+  updateStore(id: String!, data: UpdateStoreInput!): Store!
   deleteStore(id: String!): DeleteStore!
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  password: String!
 }
 
 input UpdateUserInput {
@@ -64,11 +70,11 @@ input AuthInput {
   password: String!
 }
 
-input StoreCreateInput {
+input CreateStoreInput {
   user_id: String!
   store_name: String!
 }
 
-input StoreUpdateInput {
+input UpdateStoreInput {
   store_name: String
 }

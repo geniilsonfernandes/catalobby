@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { StoreCreateInput } from './dto/store.input';
-import { StoreUpdateInput } from './dto/update-store.input';
+import { CreateStoreInput } from './dto/store.input';
+import { UpdateStoreInput } from './dto/update-store.input';
 import { Store } from './store.entity';
 
 @Injectable()
@@ -33,7 +33,7 @@ export class StoreService {
     return stores;
   }
 
-  async createStore(store: StoreCreateInput): Promise<Store> {
+  async createStore(store: CreateStoreInput): Promise<Store> {
     const storeExists = await this.getUserStore(store.user_id);
 
     if (storeExists) {
@@ -49,7 +49,7 @@ export class StoreService {
     return savedStore;
   }
 
-  async updateStore(id: string, store: StoreUpdateInput): Promise<Store> {
+  async updateStore(id: string, store: UpdateStoreInput): Promise<Store> {
     const storeExists = await this.findStoreById(id);
     const storeUpdated = await this.storeRepository.save({
       ...storeExists,
