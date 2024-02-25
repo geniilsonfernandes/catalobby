@@ -7,9 +7,9 @@ type User {
   name: String!
   email: String!
   password: String!
-  created_at: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
+  store: Store
 }
 
 """
@@ -23,12 +23,16 @@ type AuthType {
 }
 
 type Store {
-  id: ID!
-  admin_id: String!
-  store_name: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  admin: User!
+  id: ID
+  admin_id: String
+  store_name: String
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type DeleteStore {
+  message: String!
+  data: Store
 }
 
 type CustomResponse {
@@ -38,23 +42,17 @@ type CustomResponse {
 
 type Query {
   users: [User!]!
-  user(id: String!): User!
-  store(id: String!): Store!
+  user(id: String!): User
+  store(id: String!): Store
 }
 
 type Mutation {
-  createUser(data: CreateUserInput!): User!
   updateUser(id: String!, data: UpdateUserInput!): User!
   deleteUser(id: String!): CustomResponse!
   login(data: AuthInput!): AuthType!
   createStore(data: StoreCreateInput!): Store!
   updateStore(id: String!, data: StoreUpdateInput!): Store!
-}
-
-input CreateUserInput {
-  name: String!
-  email: String!
-  password: String!
+  deleteStore(id: String!): DeleteStore!
 }
 
 input UpdateUserInput {

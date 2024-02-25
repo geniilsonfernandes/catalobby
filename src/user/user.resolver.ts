@@ -4,11 +4,14 @@ import {
   Field,
   Mutation,
   ObjectType,
+  Parent,
   Query,
+  ResolveField,
   Resolver,
 } from '@nestjs/graphql';
+import { Store } from 'src/store/store.entity';
+import { StoreService } from 'src/store/store.service';
 import { GqlAuthGuard } from '../auth/auth.guard';
-import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './user.entity';
 import { UserService } from './user.service';
@@ -22,9 +25,12 @@ class CustomResponse {
   data: User;
 }
 
-@Resolver()
+@Resolver(() => User)
 export class UserResolver {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private storeService: StoreService,
+  ) {}
 
   @Query(() => [User], { name: 'users' })
   async users(): Promise<User[]> {
@@ -32,15 +38,15 @@ export class UserResolver {
   }
 
   @UseGuards(GqlAuthGuard)
-  @Query(() => User, { name: 'user' })
+  @Query(() => User, { name: 'user', nullable: true })
   async user(@Args('id') id: string): Promise<User> {
     return this.userService.findUserById(id);
   }
 
-  @Mutation(() => User, { name: 'createUser' })
-  async createUser(@Args('data') data: CreateUserInput): Promise<User> {
-    const user = await this.userService.createUser(data);
-    return user;
+  @ResolveField(() => Store, { name: 'store', nullable: true })
+  async store(@Parent() user: User): Promise<Store> {
+    const store = await this.storeService.getUserStore(user.id);
+    return store;
   }
 
   @UseGuards(GqlAuthGuard)

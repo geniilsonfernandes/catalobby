@@ -22,7 +22,9 @@ export class UserService {
   }
 
   async findUserById(id: string): Promise<User> {
-    const userExists = await this.userRepository.findOne({ where: { id } });
+    const userExists = await this.userRepository.findOne({
+      where: { id },
+    });
 
     if (!userExists) {
       throw new NotFoundException('Este usuário não existe');

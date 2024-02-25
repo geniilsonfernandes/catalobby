@@ -12,13 +12,6 @@ export class StoreService {
     private storeRepository: Repository<Store>,
   ) {}
 
-  private async checkIfuserHasStore(user_id: string): Promise<Store> {
-    const store = await this.storeRepository.findOne({
-      where: { admin_id: user_id },
-    });
-    return store;
-  }
-
   async findStoreById(id: string): Promise<Store> {
     const store = await this.storeRepository.findOne({
       where: { id },
@@ -26,14 +19,22 @@ export class StoreService {
     });
 
     if (!store) {
-      throw new NotFoundException('Este store não existe');
+      throw new NotFoundException('Loja não encontrada');
     }
 
     return store;
   }
 
+  async getUserStore(user_id: string): Promise<Store> {
+    const stores = await this.storeRepository.findOne({
+      where: { admin_id: user_id },
+      relations: ['admin'],
+    });
+    return stores;
+  }
+
   async createStore(store: StoreCreateInput): Promise<Store> {
-    const storeExists = await this.checkIfuserHasStore(store.user_id);
+    const storeExists = await this.getUserStore(store.user_id);
 
     if (storeExists) {
       throw new NotFoundException('Já existe um store para este usuário');
@@ -55,5 +56,16 @@ export class StoreService {
       store_name: store.store_name,
     });
     return storeUpdated;
+  }
+
+  async deleteStore(id: string): Promise<Store> {
+    const checkStore = await this.findStoreById(id);
+
+    if (!checkStore) {
+      throw new NotFoundException('Loja não encontrada');
+    }
+
+    const store = await this.findStoreById(id);
+    return this.storeRepository.remove(store);
   }
 }

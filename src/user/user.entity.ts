@@ -27,10 +27,6 @@ export class User {
   @Field()
   password: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  @Field()
-  created_at: Date;
-
   @CreateDateColumn({
     type: 'timestamp',
     precision: 3,
