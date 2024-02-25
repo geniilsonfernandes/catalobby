@@ -1,10 +1,12 @@
 import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
+import { Product } from 'src/product/product.entity';
 import { User } from 'src/user/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -43,4 +45,8 @@ export class Store {
   })
   @Field({ nullable: true })
   updatedAt: Date;
+
+  @OneToMany(() => Product, (product) => product.store)
+  @Field(() => [Product], { nullable: true })
+  products: Product[];
 }

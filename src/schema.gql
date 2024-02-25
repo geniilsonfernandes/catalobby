@@ -28,6 +28,17 @@ type Store {
   store_name: String
   createdAt: DateTime
   updatedAt: DateTime
+  products: [Product!]
+}
+
+type Product {
+  id: ID
+  title: String!
+  description: String!
+  price: Float!
+  sku: Float!
+  stock: Float!
+  active: Boolean!
 }
 
 type CreateStoreType {
@@ -63,6 +74,7 @@ type Mutation {
   createStore(data: CreateStoreInput!): CreateStoreType!
   updateStore(id: String!, data: UpdateStoreInput!): CreateStoreType!
   deleteStore(id: String!): DeleteStoreType!
+  createProduct(data: CreateProductInput!): Product!
 }
 
 input CreateUserInput {
@@ -87,4 +99,13 @@ input CreateStoreInput {
 
 input UpdateStoreInput {
   store_name: String
+}
+
+input CreateProductInput {
+  title: String!
+  description: String!
+  price: Float!
+  sku: Float!
+  stock: Float!
+  store_id: String!
 }

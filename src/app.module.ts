@@ -8,6 +8,8 @@ import { join } from 'path';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { AuthModule } from './auth/auth.module';
+import { Product } from './product/product.entity';
+import { ProductModule } from './product/product.module';
 import { Store } from './store/store.entity';
 import { StoreModule } from './store/store.module';
 import { User } from './user/user.entity';
@@ -41,7 +43,7 @@ import { UserModule } from './user/user.module';
           username: configService.get<string>('DB_USERNAME'),
           password: configService.get<string>('DB_PASSWORD'),
           database: configService.get<string>('DB_DATABASE'),
-          entities: [User, Store],
+          entities: [User, Store, Product],
           synchronize: true,
           // logging: true,
         };
@@ -57,6 +59,7 @@ import { UserModule } from './user/user.module';
     UserModule,
     AuthModule,
     StoreModule,
+    ProductModule,
   ],
   controllers: [],
   providers: [],
