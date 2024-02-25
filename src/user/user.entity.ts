@@ -18,6 +18,7 @@ export class User {
   email: string;
 
   @Column()
+  @Field()
   password: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

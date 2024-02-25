@@ -6,9 +6,9 @@ type User {
   id: ID!
   name: String!
   email: String!
+  password: String!
   created_at: DateTime!
   updated_at: DateTime!
-  password: String!
 }
 
 """

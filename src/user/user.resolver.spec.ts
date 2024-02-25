@@ -2,11 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { TestUltil } from './common/test/TestUltil';
 import { User } from './user.entity';
-import {
-  UserResolver,
-  queryUserListType,
-  queryUserType,
-} from './user.resolver';
+import { UserResolver } from './user.resolver';
 import { UserService } from './user.service';
 
 describe('UserResolver', () => {
@@ -45,11 +41,6 @@ describe('UserResolver', () => {
     }).compile();
 
     resolver = module.get<UserResolver>(UserResolver);
-  });
-
-  it('should type correctly', () => {
-    expect(queryUserType()).toBeTruthy();
-    expect(queryUserListType()).toBeTruthy();
   });
 
   it('should return an array of users', async () => {
