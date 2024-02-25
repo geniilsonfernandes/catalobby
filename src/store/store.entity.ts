@@ -1,45 +1,45 @@
-// user.entity.ts
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { User } from 'src/user/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity({ name: 'users' })
+@Entity({ name: 'stores' })
 @ObjectType()
-export class User {
+export class Store {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => ID)
   id: string;
 
   @Column()
   @Field()
-  name: string;
+  admin_id: string;
 
-  @Column({ unique: true })
-  @Field()
-  email: string;
+  @OneToOne(() => User)
+  @JoinColumn({ name: 'admin_id' })
+  admin: User;
 
   @Column()
   @Field()
-  password: string;
-
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  @Field()
-  created_at: Date;
+  store_name: string;
 
   @CreateDateColumn({
     type: 'timestamp',
     precision: 3,
   })
+  @Field()
   createdAt: Date;
 
   @UpdateDateColumn({
     type: 'timestamp',
     precision: 3,
   })
+  @Field()
   updatedAt: Date;
 }

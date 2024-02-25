@@ -8,7 +8,8 @@ type User {
   email: String!
   password: String!
   created_at: DateTime!
-  updated_at: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 """
@@ -21,6 +22,15 @@ type AuthType {
   token: String!
 }
 
+type Store {
+  id: ID!
+  admin_id: String!
+  store_name: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  admin: User!
+}
+
 type CustomResponse {
   message: String!
   data: User
@@ -29,6 +39,7 @@ type CustomResponse {
 type Query {
   users: [User!]!
   user(id: String!): User!
+  store(id: String!): Store!
 }
 
 type Mutation {
@@ -36,6 +47,8 @@ type Mutation {
   updateUser(id: String!, data: UpdateUserInput!): User!
   deleteUser(id: String!): CustomResponse!
   login(data: AuthInput!): AuthType!
+  createStore(data: StoreCreateInput!): Store!
+  updateStore(id: String!, data: StoreUpdateInput!): Store!
 }
 
 input CreateUserInput {
@@ -51,4 +64,13 @@ input UpdateUserInput {
 input AuthInput {
   email: String!
   password: String!
+}
+
+input StoreCreateInput {
+  user_id: String!
+  store_name: String!
+}
+
+input StoreUpdateInput {
+  store_name: String
 }
