@@ -1,7 +1,8 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GqlAuthGuard } from 'src/auth/auth.guard';
-import { DeleteStore } from './common/CustomResponse';
+import { CreateStoreType } from './common/create-store.type';
+import { DeleteStoreType } from './common/delete-store.type';
 import { CreateStoreInput } from './dto/store.input';
 import { UpdateStoreInput } from './dto/update-store.input';
 import { Store } from './store.entity';
@@ -20,23 +21,35 @@ export class StoreResolver {
   }
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => Store, { name: 'createStore' })
-  async createStore(@Args('data') data: CreateStoreInput): Promise<Store> {
-    return this.storeService.createStore(data);
+  @Mutation(() => CreateStoreType, { name: 'createStore' })
+  async createStore(
+    @Args('data') data: CreateStoreInput,
+  ): Promise<CreateStoreType> {
+    const storeCreated = await this.storeService.createStore(data);
+
+    return {
+      message: 'Loja criada com sucesso',
+      data: storeCreated,
+    };
   }
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => Store, { name: 'updateStore' })
+  @Mutation(() => CreateStoreType, { name: 'updateStore' })
   async updateStore(
     @Args('id') id: string,
     @Args('data') data: UpdateStoreInput,
-  ): Promise<Store> {
-    return this.storeService.updateStore(id, data);
+  ): Promise<CreateStoreType> {
+    const storeUpdated = await this.storeService.updateStore(id, data);
+
+    return {
+      message: 'Loja atualizada com sucesso',
+      data: storeUpdated,
+    };
   }
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => DeleteStore, { name: 'deleteStore' })
-  async deleteStore(@Args('id') id: string): Promise<DeleteStore> {
+  @Mutation(() => DeleteStoreType, { name: 'deleteStore' })
+  async deleteStore(@Args('id') id: string): Promise<DeleteStoreType> {
     const deletedStore = await this.storeService.deleteStore(id);
 
     return {

@@ -1,9 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import {
   Args,
-  Field,
   Mutation,
-  ObjectType,
   Parent,
   Query,
   ResolveField,
@@ -12,19 +10,12 @@ import {
 import { Store } from 'src/store/store.entity';
 import { StoreService } from 'src/store/store.service';
 import { GqlAuthGuard } from '../auth/auth.guard';
+import { CreateUserType } from './common/create-user.type';
+import { DeleteUserType } from './common/delete-user.type';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './user.entity';
 import { UserService } from './user.service';
-
-@ObjectType()
-class CustomResponse {
-  @Field()
-  message: string;
-
-  @Field(() => User, { nullable: true })
-  data: User;
-}
 
 @Resolver(() => User)
 export class UserResolver {
@@ -46,25 +37,34 @@ export class UserResolver {
   }
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => User, { name: 'createUser' })
-  async createUser(@Args('data') data: CreateUserInput): Promise<User> {
-    return this.userService.createUser(data);
+  @Mutation(() => CreateUserType, { name: 'createUser' })
+  async createUser(
+    @Args('data') data: CreateUserInput,
+  ): Promise<CreateUserType> {
+    const user = await this.userService.createUser(data);
+    return {
+      message: 'Usuário criado com sucesso',
+      data: user,
+    };
   }
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => User, { name: 'updateUser' })
+  @Mutation(() => CreateUserType, { name: 'updateUser' })
   async updateUser(
     @Args('id') id: string,
     @Args('data') data: UpdateUserInput,
-  ) {
+  ): Promise<CreateUserType> {
     const userUpdated = await this.userService.updateUser(id, data);
 
-    return userUpdated;
+    return {
+      message: 'Usuário atualizado com sucesso',
+      data: userUpdated,
+    };
   }
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => CustomResponse, { name: 'deleteUser' })
-  async deleteUser(@Args('id') id: string): Promise<CustomResponse> {
+  @Mutation(() => DeleteUserType, { name: 'deleteUser' })
+  async deleteUser(@Args('id') id: string): Promise<DeleteUserType> {
     const userDeleted = await this.userService.deleteUser(id);
 
     return {

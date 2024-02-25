@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { Store } from '../store.entity';
 
 @ObjectType()
-export class DeleteStore {
+export class DeleteStoreType {
   @Field()
   message: string;
 

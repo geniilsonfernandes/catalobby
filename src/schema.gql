@@ -30,12 +30,22 @@ type Store {
   updatedAt: DateTime
 }
 
-type DeleteStore {
+type CreateStoreType {
   message: String!
   data: Store
 }
 
-type CustomResponse {
+type DeleteStoreType {
+  message: String!
+  data: Store
+}
+
+type CreateUserType {
+  message: String!
+  data: User
+}
+
+type DeleteUserType {
   message: String!
   data: User
 }
@@ -46,13 +56,13 @@ type Query {
 }
 
 type Mutation {
-  createUser(data: CreateUserInput!): User!
-  updateUser(id: String!, data: UpdateUserInput!): User!
-  deleteUser(id: String!): CustomResponse!
+  createUser(data: CreateUserInput!): CreateUserType!
+  updateUser(id: String!, data: UpdateUserInput!): CreateUserType!
+  deleteUser(id: String!): DeleteUserType!
   login(data: AuthInput!): AuthType!
-  createStore(data: CreateStoreInput!): Store!
-  updateStore(id: String!, data: UpdateStoreInput!): Store!
-  deleteStore(id: String!): DeleteStore!
+  createStore(data: CreateStoreInput!): CreateStoreType!
+  updateStore(id: String!, data: UpdateStoreInput!): CreateStoreType!
+  deleteStore(id: String!): DeleteStoreType!
 }
 
 input CreateUserInput {
