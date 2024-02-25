@@ -52,6 +52,16 @@ describe('UserService', () => {
     expect(result.length).toBe(2);
   });
 
+  it('should find user by email', async () => {
+    const user = TestUltil.giveMeAUser();
+    mockRepository.findOne.mockReturnValue(user);
+
+    const result = await service.findUserByEmail(user.email);
+
+    expect(result.name).toBe(user.name);
+    expect(result.email).toBe(user.email);
+  });
+
   it('should find user', async () => {
     const user = TestUltil.giveMeAUser();
     mockRepository.findOne.mockReturnValue(user);

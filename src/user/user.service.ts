@@ -31,6 +31,16 @@ export class UserService {
     return userExists;
   }
 
+  async findUserByEmail(email: string): Promise<User> {
+    const userExists = await this.userRepository.findOne({ where: { email } });
+
+    if (!userExists) {
+      throw new NotFoundException('Este usuário não existe');
+    }
+
+    return userExists;
+  }
+
   async createUser(data: CreateUserInput): Promise<User> {
     const userExists = await this.userRepository.findOne({
       where: { email: data.email },
@@ -40,8 +50,7 @@ export class UserService {
       throw new InternalServerErrorException('Este usuário ja existe');
     }
 
-    const salt = await bcrypt.genSalt();
-    const passwordHash = await bcrypt.hash(data.password, salt);
+    const passwordHash = await bcrypt.hash(data.password, 8);
 
     data.password = passwordHash;
 
