@@ -62,7 +62,6 @@ type DeleteUserType {
 }
 
 type Query {
-  user(id: String!): User
   store(id: String!): Store
 }
 

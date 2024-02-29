@@ -3,13 +3,12 @@ import {
   Args,
   Mutation,
   Parent,
-  Query,
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
+import { GqlAuthGuard } from 'src/auth/auth.guard';
 import { Store } from 'src/store/store.entity';
 import { StoreService } from 'src/store/store.service';
-import { GqlAuthGuard } from '../auth/auth.guard';
 import { CreateUserType } from './common/create-user.type';
 import { DeleteUserType } from './common/delete-user.type';
 import { CreateUserInput } from './dto/create-user.input';
@@ -25,30 +24,24 @@ export class UserResolver {
   ) {}
 
   @UseGuards(GqlAuthGuard)
-  @Query(() => User, { name: 'user', nullable: true })
-  async user(@Args('id') id: string): Promise<User> {
-    return this.userService.findUserById(id);
-  }
-
   @ResolveField(() => Store, { name: 'store', nullable: true })
   async store(@Parent() user: User): Promise<Store> {
     const store = await this.storeService.getUserStore(user.id);
     return store;
   }
 
-  @UseGuards(GqlAuthGuard)
   @Mutation(() => CreateUserType, { name: 'createUser' })
   async createUser(
     @Args('data') data: CreateUserInput,
   ): Promise<CreateUserType> {
     const user = await this.userService.createUser(data);
+
     return {
       message: 'Usuário criado com sucesso',
       data: user,
     };
   }
 
-  @UseGuards(GqlAuthGuard)
   @Mutation(() => CreateUserType, { name: 'updateUser' })
   async updateUser(
     @Args('id') id: string,
@@ -62,7 +55,6 @@ export class UserResolver {
     };
   }
 
-  @UseGuards(GqlAuthGuard)
   @Mutation(() => DeleteUserType, { name: 'deleteUser' })
   async deleteUser(@Args('id') id: string): Promise<DeleteUserType> {
     const userDeleted = await this.userService.deleteUser(id);

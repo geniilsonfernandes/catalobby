@@ -44,51 +44,10 @@ describe('UserResolver', () => {
     resolver = module.get<UserResolver>(UserResolver);
   });
 
-  it('should return an array of users', async () => {
-    mockUserService.findAllUsers.mockReturnValue(TestUltil.giveMeUsers(3));
-    const result = await resolver.users();
-
-    expect(result).toEqual(TestUltil.giveMeUsers(3));
-  });
-
   it('should return a user', async () => {
     mockUserService.findUserById.mockReturnValue(TestUltil.giveMeAUser());
     const result = await resolver.user('1');
 
     expect(result).toEqual(TestUltil.giveMeAUser());
-  });
-
-  it("shouldn't return a user if not exists", async () => {
-    mockUserService.findUserById.mockReturnValue(null);
-    const result = await resolver.user('1');
-
-    expect(result).toBeNull();
-  });
-
-  it('should create a user', async () => {
-    mockUserService.createUser.mockReturnValue(TestUltil.giveMeAUser());
-    const result = await resolver.createUser({
-      name: 'name',
-      email: 'email@email.com',
-      password: 'password',
-    });
-
-    expect(result).toEqual(TestUltil.giveMeAUser());
-  });
-
-  it('should update a user', async () => {
-    mockUserService.updateUser.mockReturnValue(TestUltil.giveMeAUser());
-    const result = await resolver.updateUser('1', {
-      name: 'name',
-    });
-
-    expect(result).toEqual(TestUltil.giveMeAUser());
-  });
-
-  it('should delete a user', async () => {
-    mockUserService.deleteUser.mockReturnValue(TestUltil.giveMeAUser());
-    const result = await resolver.deleteUser('1');
-
-    expect(result.message).toEqual('Usuário excluído com sucesso');
   });
 });

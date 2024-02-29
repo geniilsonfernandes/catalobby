@@ -49,6 +49,7 @@ export class UserService {
     });
 
     if (userExists) {
+      throw new UserAlreadyExistsException();
       throw new InternalServerErrorException('Este usuário ja existe');
     }
 
