@@ -12,7 +12,7 @@ import { Product } from './product/product.entity';
 import { ProductModule } from './product/product.module';
 import { Store } from './store/store.entity';
 import { StoreModule } from './store/store.module';
-import { User } from './user/user.entity';
+import { User } from './user/entity/user.entity';
 import { UserModule } from './user/user.module';
 
 @Module({

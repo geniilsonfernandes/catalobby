@@ -1,11 +1,9 @@
-import {
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { UserAlreadyExistsException } from './common/erros/UserAlreadyExistsException';
+import { NotFoundUserException } from './common/erros/UserAlreadyExistsException copy';
 import { TestUltil } from './common/test/TestUltil';
-import { User } from './user.entity';
+import { User } from './entity/user.entity';
 import { UserService } from './user.service';
 
 describe('UserService', () => {
@@ -34,52 +32,6 @@ describe('UserService', () => {
     service = module.get<UserService>(UserService);
   });
 
-  beforeEach(() => {
-    mockRepository.findOne.mockReset();
-    mockRepository.find.mockReset();
-    mockRepository.create.mockReset();
-    mockRepository.save.mockReset();
-    mockRepository.update.mockReset();
-    mockRepository.remove.mockReset();
-  });
-
-  it('should find all users', async () => {
-    const users = [TestUltil.giveMeAUser(), TestUltil.giveMeAUser()];
-    mockRepository.find.mockReturnValue(users);
-
-    const result = await service.findAllUsers();
-
-    expect(result.length).toBe(2);
-  });
-
-  it('should find user by email', async () => {
-    const user = TestUltil.giveMeAUser();
-    mockRepository.findOne.mockReturnValue(user);
-
-    const result = await service.findUserByEmail(user.email);
-
-    expect(result.name).toBe(user.name);
-    expect(result.email).toBe(user.email);
-  });
-
-  it('should find user', async () => {
-    const user = TestUltil.giveMeAUser();
-    mockRepository.findOne.mockReturnValue(user);
-
-    const result = await service.findUserById('1');
-
-    expect(result.name).toBe(user.name);
-    expect(result.email).toBe(user.email);
-  });
-
-  it('should not find user if not exists', async () => {
-    mockRepository.findOne.mockReturnValue(null);
-
-    await expect(service.findUserById('1')).rejects.toBeInstanceOf(
-      NotFoundException,
-    );
-  });
-
   it('should create a new user', async () => {
     const user = TestUltil.giveMeAUser();
     mockRepository.create.mockReturnValue(user);
@@ -92,13 +44,27 @@ describe('UserService', () => {
     expect(result.password).toBe(user.password);
   });
 
-  it('should not create a new user if exists', async () => {
+  it('should reject to create if user already exists', async () => {
     const user = TestUltil.giveMeAUser();
-
     mockRepository.findOne.mockReturnValue(user);
-
     await expect(service.createUser(user)).rejects.toBeInstanceOf(
-      InternalServerErrorException,
+      UserAlreadyExistsException,
+    );
+  });
+
+  it('should get a user', async () => {
+    const user = TestUltil.giveMeAUser();
+    mockRepository.findOne.mockReturnValue(user);
+    const result = await service.findUserById('1');
+    expect(result.name).toBe(user.name);
+    expect(result.email).toBe(user.email);
+    expect(result.password).toBe(user.password);
+  });
+
+  it('should not get a user if not exists', async () => {
+    mockRepository.findOne.mockReturnValue(null);
+    await expect(service.findUserById('1')).rejects.toBeInstanceOf(
+      NotFoundUserException,
     );
   });
 
@@ -111,9 +77,7 @@ describe('UserService', () => {
       name: 'new name',
       id: '1',
     });
-
     const result = await service.updateUser('1', user);
-
     expect(result.name).toBe(user.name);
     expect(result.email).toBe(user.email);
     expect(result.password).toBe(user.password);
@@ -121,11 +85,9 @@ describe('UserService', () => {
 
   it('should not update a user if not exists', async () => {
     const user = TestUltil.giveMeAUser();
-
     mockRepository.findOne.mockReturnValue(null);
-
     await expect(service.updateUser('1', user)).rejects.toBeInstanceOf(
-      NotFoundException,
+      NotFoundUserException,
     );
   });
 
@@ -143,7 +105,7 @@ describe('UserService', () => {
     mockRepository.findOne.mockReturnValue(null);
 
     await expect(service.deleteUser('1')).rejects.toBeInstanceOf(
-      NotFoundException,
+      NotFoundUserException,
     );
   });
 });

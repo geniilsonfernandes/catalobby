@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { TestUltil } from './common/test/TestUltil';
-import { User } from './user.entity';
+import { User } from './entity/user.entity';
 import { UserResolver } from './user.resolver';
 import { UserService } from './user.service';
 
-describe('UserResolver', () => {
+describe('UserResolver ', () => {
   let resolver: UserResolver;
 
   const mockUserService = {
@@ -44,10 +44,43 @@ describe('UserResolver', () => {
     resolver = module.get<UserResolver>(UserResolver);
   });
 
-  it('should return a user', async () => {
-    mockUserService.findUserById.mockReturnValue(TestUltil.giveMeAUser());
-    const result = await resolver.user('1');
+  describe('query', () => {
+    it('should be find a user by id', async () => {
+      const user = TestUltil.giveMeAUser();
+      mockRepository.findOne.mockReturnValue(user);
+      mockUserService.findUserById.mockReturnValue(user);
+      const result = await resolver.findUserById(user.id);
+      expect(result).toEqual(user);
+    });
+  });
 
-    expect(result).toEqual(TestUltil.giveMeAUser());
+  describe('mutations', () => {
+    it('should be create a user', async () => {
+      const user = TestUltil.giveMeAUser();
+      mockRepository.create.mockReturnValue(user);
+      mockRepository.save.mockReturnValue(user);
+      mockUserService.createUser.mockReturnValue(user);
+      const result = await resolver.createUser(user);
+      expect(result.message).toEqual('Usuário criado com sucesso');
+    });
+
+    it('should be update a user', async () => {
+      const user = TestUltil.giveMeAUser();
+      mockRepository.create.mockReturnValue(user);
+      mockRepository.save.mockReturnValue(user);
+      mockUserService.updateUser.mockReturnValue(user);
+      const result = await resolver.updateUser(user.id, user);
+
+      expect(result.message).toEqual('Usuário atualizado com sucesso');
+    });
+
+    it('should be delete a user', async () => {
+      const user = TestUltil.giveMeAUser();
+      mockRepository.create.mockReturnValue(user);
+      mockRepository.save.mockReturnValue(user);
+      mockUserService.deleteUser.mockReturnValue(user);
+      const result = await resolver.deleteUser(user.id);
+      expect(result.message).toEqual('Usuário excluído com sucesso');
+    });
   });
 });

@@ -1,14 +1,11 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { CreateUserInput } from './dto/create-user.input';
-import { User } from './user.entity';
-
 import * as bcrypt from 'bcrypt';
+import { Repository } from 'typeorm';
+import { UserAlreadyExistsException } from './common/erros/UserAlreadyExistsException';
+import { NotFoundUserException } from './common/erros/UserAlreadyExistsException copy';
+import { CreateUserInput } from './dto/create-user.input';
+import { User } from './entity/user.entity';
 
 @Injectable()
 export class UserService {
@@ -17,68 +14,52 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
-  async findAllUsers(): Promise<User[]> {
-    return this.userRepository.find();
-  }
-
-  async findUserById(id: string): Promise<User> {
-    const userExists = await this.userRepository.findOne({
+  private async findUserOrFail(id: string): Promise<User> {
+    const user = await this.userRepository.findOne({
       where: { id },
     });
-
-    if (!userExists) {
-      throw new NotFoundException('Este usuário não existe');
+    if (!user) {
+      throw new NotFoundUserException('Este usuário não existe');
     }
-
-    return userExists;
+    return user;
   }
 
   async findUserByEmail(email: string): Promise<User> {
-    const userExists = await this.userRepository.findOne({ where: { email } });
-
-    if (!userExists) {
-      throw new NotFoundException('Este usuário não existe');
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new NotFoundUserException('Este usuário não existe');
     }
+    return user;
+  }
 
-    return userExists;
+  async findUserById(id: string): Promise<User> {
+    return this.findUserOrFail(id);
   }
 
   async createUser(data: CreateUserInput): Promise<User> {
-    const userExists = await this.userRepository.findOne({
+    const alreadyExists = await this.userRepository.findOne({
       where: { email: data.email },
     });
 
-    if (userExists) {
-      throw new UserAlreadyExistsException();
-      throw new InternalServerErrorException('Este usuário ja existe');
+    if (alreadyExists) {
+      throw new UserAlreadyExistsException('Este usuário já existe');
     }
-
     const passwordHash = await bcrypt.hash(data.password, 8);
-
-    data.password = passwordHash;
-
-    const user = this.userRepository.create(data);
-    const userSaved = await this.userRepository.save(user);
-
-    return userSaved;
+    const user = this.userRepository.create({
+      ...data,
+      password: passwordHash,
+    });
+    return this.userRepository.save(user);
   }
 
   async updateUser(id: string, data: Partial<User>): Promise<User> {
-    const userExists = await this.findUserById(id);
-
-    const userUpdated = await this.userRepository.save({
-      ...userExists,
-      ...data,
-    });
-
-    return userUpdated;
+    const user = await this.findUserOrFail(id);
+    const updatedUser = await this.userRepository.save({ ...user, ...data });
+    return updatedUser;
   }
 
   async deleteUser(id: string): Promise<User> {
-    const userExists = await this.findUserById(id);
-
-    const userDeleted = await this.userRepository.remove(userExists);
-
-    return userDeleted;
+    const user = await this.findUserOrFail(id);
+    return this.userRepository.remove(user);
   }
 }
