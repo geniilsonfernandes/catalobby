@@ -1,6 +1,5 @@
 // user.entity.ts
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { Store } from 'src/store/store.entity';
 import {
   Column,
   CreateDateColumn,
@@ -10,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Store } from '../../store/store.entity';
 
 @Entity({ name: 'users' })
 @ObjectType()

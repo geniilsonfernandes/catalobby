@@ -1,6 +1,4 @@
 import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
-import { Product } from 'src/product/product.entity';
-import { User } from 'src/user/entity/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -11,6 +9,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Product } from '../product/product.entity';
+import { User } from '../user/entity/user.entity';
 
 @Entity({ name: 'stores' })
 @ObjectType()

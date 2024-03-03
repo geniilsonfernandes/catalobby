@@ -68,6 +68,23 @@ describe('UserService', () => {
     );
   });
 
+  it('should get a user by email', async () => {
+    const user = TestUltil.giveMeAUser();
+    mockRepository.findOne.mockReturnValue(user);
+    const result = await service.findUserByEmail(user.email);
+    expect(result.name).toBe(user.name);
+    expect(result.email).toBe(user.email);
+    expect(result.password).toBe(user.password);
+  });
+
+  it('should not get a user by email if not exists', async () => {
+    const user = TestUltil.giveMeAUser();
+    mockRepository.findOne.mockReturnValue(null);
+    await expect(service.findUserByEmail(user.email)).rejects.toBeInstanceOf(
+      NotFoundUserException,
+    );
+  });
+
   it('should update a user', async () => {
     const user = TestUltil.giveMeAUser();
     user.name = 'new name';
