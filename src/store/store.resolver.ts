@@ -1,11 +1,11 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { GqlAuthGuard } from 'src/auth/auth.guard';
+import { GqlAuthGuard } from '../auth/auth.guard';
 import { CreateStoreType } from './common/create-store.type';
 import { DeleteStoreType } from './common/delete-store.type';
 import { CreateStoreInput } from './dto/store.input';
 import { UpdateStoreInput } from './dto/update-store.input';
-import { Store } from './store.entity';
+import { Store } from './entity/store.entity';
 import { StoreService } from './store.service';
 
 @Resolver(() => Store)
@@ -15,7 +15,7 @@ export class StoreResolver {
   @UseGuards(GqlAuthGuard)
   @Query(() => Store, { name: 'store', nullable: true })
   async store(@Args('id') id: string): Promise<Store> {
-    const store = await this.storeService.findStoreById(id);
+    const store = await this.storeService.getStoreById(id);
 
     return store;
   }

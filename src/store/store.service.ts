@@ -1,9 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { NotFoundStoreException } from './common/erros/NotFoundStoreException';
+import { StoreAlreadyExistsException } from './common/erros/StoreAlreadyExistsException';
 import { CreateStoreInput } from './dto/store.input';
 import { UpdateStoreInput } from './dto/update-store.input';
-import { Store } from './store.entity';
+import { Store } from './entity/store.entity';
 
 @Injectable()
 export class StoreService {
@@ -12,20 +14,19 @@ export class StoreService {
     private storeRepository: Repository<Store>,
   ) {}
 
-  async findStoreById(id: string): Promise<Store> {
+  async findStoreOrFail(id: string): Promise<Store> {
     const store = await this.storeRepository.findOne({
       where: { id },
       relations: ['admin'],
     });
-
     if (!store) {
-      throw new NotFoundException('Loja não encontrada');
+      throw new NotFoundStoreException();
     }
 
     return store;
   }
 
-  async getUserStore(user_id: string): Promise<Store> {
+  private async getUserStore(user_id: string): Promise<Store> {
     const stores = await this.storeRepository.findOne({
       where: { admin_id: user_id },
       relations: ['admin'],
@@ -33,11 +34,16 @@ export class StoreService {
     return stores;
   }
 
-  async createStore(store: CreateStoreInput): Promise<Store> {
-    const storeExists = await this.getUserStore(store.user_id);
+  async getStoreById(id: string): Promise<Store> {
+    const store = await this.findStoreOrFail(id);
+    return store;
+  }
 
-    if (storeExists) {
-      throw new NotFoundException('Já existe um store para este usuário');
+  async createStore(store: CreateStoreInput): Promise<Store> {
+    const userAlreadyHasStore = await this.getUserStore(store.user_id);
+
+    if (userAlreadyHasStore) {
+      throw new StoreAlreadyExistsException('Este usuário já possui uma loja');
     }
 
     const newStore = this.storeRepository.create({
@@ -49,23 +55,18 @@ export class StoreService {
     return savedStore;
   }
 
-  async updateStore(id: string, store: UpdateStoreInput): Promise<Store> {
-    const storeExists = await this.findStoreById(id);
+  async updateStore(id: string, data: UpdateStoreInput): Promise<Store> {
+    const store = await this.findStoreOrFail(id);
     const storeUpdated = await this.storeRepository.save({
-      ...storeExists,
-      store_name: store.store_name,
+      ...store,
+      store_name: data.store_name,
     });
     return storeUpdated;
   }
 
   async deleteStore(id: string): Promise<Store> {
-    const checkStore = await this.findStoreById(id);
+    const store = await this.findStoreOrFail(id);
 
-    if (!checkStore) {
-      throw new NotFoundException('Loja não encontrada');
-    }
-
-    const store = await this.findStoreById(id);
     return this.storeRepository.remove(store);
   }
 }

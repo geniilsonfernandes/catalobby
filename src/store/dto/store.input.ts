@@ -5,14 +5,14 @@ import { IsNotEmpty, IsString } from 'class-validator';
 export class CreateStoreInput {
   @IsString()
   @IsNotEmpty({
-    message: 'Este campo não pode ser vazio',
+    message: 'id do usuário não pode ser vazio',
   })
   @Field()
   user_id: string;
 
   @IsString()
   @IsNotEmpty({
-    message: 'Este campo não pode ser vazio',
+    message: 'Nome da loja não pode ser vazio',
   })
   @Field()
   store_name: string;

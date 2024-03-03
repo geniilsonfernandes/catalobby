@@ -9,8 +9,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Product } from '../product/product.entity';
-import { User } from '../user/entity/user.entity';
+import { Product } from '../../product/product.entity';
+import { User } from '../../user/entity/user.entity';
 
 @Entity({ name: 'stores' })
 @ObjectType()

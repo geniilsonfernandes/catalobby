@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { NotFoundUserException } from './common/erros/NotFoundUserException';
 import { UserAlreadyExistsException } from './common/erros/UserAlreadyExistsException';
-import { NotFoundUserException } from './common/erros/UserAlreadyExistsException copy';
 import { TestUltil } from './common/test/TestUltil';
 import { User } from './entity/user.entity';
 import { UserService } from './user.service';
