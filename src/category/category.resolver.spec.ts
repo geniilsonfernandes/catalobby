@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+
+import { MockRepository } from '../__mocks__/MockRepository';
 import { CategoryResolver } from './category.resolver';
 import { CategoryService } from './category.service';
 import { Category } from './entity';
@@ -14,14 +16,7 @@ describe('CategoryResolver', () => {
     findAll: jest.fn().mockImplementation((data) => data),
   };
 
-  const mockRepository = {
-    create: jest.fn().mockImplementation((data) => data),
-    save: jest.fn().mockImplementation((data) => data),
-    find: jest.fn().mockImplementation((data) => data),
-    findOne: jest.fn().mockImplementation((data) => data),
-    update: jest.fn().mockImplementation((data) => data),
-    delete: jest.fn().mockImplementation((data) => data),
-  };
+  const mockRepository = new MockRepository();
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -45,12 +40,12 @@ describe('CategoryResolver', () => {
     it('should create a new category call createCategory', async () => {
       const result = await resolver.createCategory({
         catagory_name: 'test',
-        user_id: '1',
+        store_id: '1',
       });
 
       expect(mockCategoryService.createCategory).toHaveBeenCalledWith({
         catagory_name: 'test',
-        user_id: '1',
+        store_id: '1',
       });
 
       expect(result.message).toBe('Categoria criada com sucesso');

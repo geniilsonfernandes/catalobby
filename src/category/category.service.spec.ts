@@ -1,8 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { MockRepository } from '../__mocks__/MockRepository';
 import { CategoryService } from './category.service';
-import { NotFoundCategoryException } from './common/erros/';
+import { NotFoundCategoryException } from './common/erros';
 import { Category } from './entity';
 
 const category = {
@@ -15,15 +16,7 @@ const category = {
 describe('CategoryService', () => {
   let service: CategoryService;
 
-  const mockRepository = {
-    create: jest.fn().mockImplementation((data) => data),
-    save: jest.fn().mockImplementation((data) => data),
-    find: jest.fn().mockImplementation((data) => data),
-    findOne: jest.fn().mockImplementation((data) => data),
-    update: jest.fn().mockImplementation((data) => data),
-    delete: jest.fn().mockImplementation((data) => data),
-  };
-
+  const mockRepository = new MockRepository();
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -51,14 +44,14 @@ describe('CategoryService', () => {
     await service.updateCategory(category.id, {
       catagory_name: category.catagory_name,
     });
-    expect(mockRepository.update).toHaveBeenCalled();
+    expect(mockRepository.save).toHaveBeenCalled();
   });
 
   it('should not be update a category if not exists', async () => {
     mockRepository.findOne.mockReturnValue(null);
 
-    expect(
-      await service.updateCategory('1', {
+    await expect(
+      service.updateCategory('1', {
         catagory_name: category.catagory_name,
       }),
     ).rejects.toBeInstanceOf(NotFoundCategoryException);
@@ -72,12 +65,12 @@ describe('CategoryService', () => {
 
   it('should not be delete a category if not exists', async () => {
     mockRepository.findOne.mockReturnValue(null);
-    expect(await service.deleteCategory('1')).rejects.toBeInstanceOf(
+    await expect(service.deleteCategory('1')).rejects.toBeInstanceOf(
       NotFoundCategoryException,
     );
   });
 
-  it('should get a category', async () => {
+  it('should get all category', async () => {
     await service.findAll(category.id);
     expect(mockRepository.findOne).toHaveBeenCalled();
   });

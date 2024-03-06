@@ -1,18 +1,23 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GqlAuthGuard } from '../auth/auth.guard';
-import { CreateStoreType } from './common/create-store.type';
-import { DeleteStoreType } from './common/delete-store.type';
+
+import { StoreResponseType } from './dto';
 import { CreateStoreInput } from './dto/store.input';
 import { UpdateStoreInput } from './dto/update-store.input';
-import { Store } from './entity/store.entity';
+import { Store } from './entity';
 import { StoreService } from './store.service';
 
 @Resolver(() => Store)
 export class StoreResolver {
   constructor(private storeService: StoreService) {}
 
-  @UseGuards(GqlAuthGuard)
+  @Query(() => Store, { name: 'userStore', nullable: true })
+  async userStore(@Args('user_id') user_id: string): Promise<Store> {
+    const store = await this.storeService.getUserStore(user_id);
+    return store;
+  }
+
   @Query(() => Store, { name: 'store', nullable: true })
   async store(@Args('id') id: string): Promise<Store> {
     const store = await this.storeService.getStoreById(id);
@@ -21,10 +26,10 @@ export class StoreResolver {
   }
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => CreateStoreType, { name: 'createStore' })
+  @Mutation(() => StoreResponseType, { name: 'createStore' })
   async createStore(
     @Args('data') data: CreateStoreInput,
-  ): Promise<CreateStoreType> {
+  ): Promise<StoreResponseType> {
     const storeCreated = await this.storeService.createStore(data);
 
     return {
@@ -34,11 +39,11 @@ export class StoreResolver {
   }
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => CreateStoreType, { name: 'updateStore' })
+  @Mutation(() => StoreResponseType, { name: 'updateStore' })
   async updateStore(
     @Args('id') id: string,
     @Args('data') data: UpdateStoreInput,
-  ): Promise<CreateStoreType> {
+  ): Promise<StoreResponseType> {
     const storeUpdated = await this.storeService.updateStore(id, data);
 
     return {
@@ -48,8 +53,8 @@ export class StoreResolver {
   }
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => DeleteStoreType, { name: 'deleteStore' })
-  async deleteStore(@Args('id') id: string): Promise<DeleteStoreType> {
+  @Mutation(() => StoreResponseType, { name: 'deleteStore' })
+  async deleteStore(@Args('id') id: string): Promise<StoreResponseType> {
     const deletedStore = await this.storeService.deleteStore(id);
 
     return {

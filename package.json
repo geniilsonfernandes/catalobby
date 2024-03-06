@@ -85,8 +85,10 @@
     ],
     "coveragePathIgnorePatterns": [
       "/node_modules/",
-      "user\\.module\\.ts$",
-      "user\\.entity\\.ts$"
+      "\\.module\\.ts$",
+      "\\.entity\\.ts$",
+      "\\.type\\.ts$",
+      "\\.input\\.ts$"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"

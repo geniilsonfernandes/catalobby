@@ -2,6 +2,21 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  password: String!
+  store: Store
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type Product {
   id: ID
   title: String!
@@ -10,31 +25,28 @@ type Product {
   sku: Float!
   stock: Float!
   active: Boolean!
+  category: Category
+  created_at: DateTime!
+  updated_at: DateTime
 }
 
 type Store {
   id: ID
-  admin_id: String
   store_name: String
-  createdAt: DateTime
-  updatedAt: DateTime
+  categories: [Category!]
   products: [Product!]
+  created_at: DateTime
+  updated_at: DateTime
+  user: User!
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
-type User {
-  id: ID!
-  name: String!
-  email: String!
-  password: String!
-  store_id: String
+type Category {
+  id: ID
+  catagory_name: String!
+  created_at: DateTime
+  updated_at: DateTime
   store: Store
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  products: [Product!]
 }
 
 type AuthType {
@@ -42,12 +54,19 @@ type AuthType {
   token: String!
 }
 
-type CreateStoreType {
-  message: String!
-  data: Store
+type CategoryType {
+  id: String!
+  catagory_name: String!
+  created_at: DateTime!
+  updated_at: DateTime!
 }
 
-type DeleteStoreType {
+type CategoryResponseType {
+  message: String!
+  data: CategoryType
+}
+
+type StoreResponseType {
   message: String!
   data: Store
 }
@@ -64,7 +83,9 @@ type DeleteUserType {
 
 type Query {
   user(id: String!): User!
+  userStore(user_id: String!): Store
   store(id: String!): Store
+  categories(store_id: String!): [Category!]!
 }
 
 type Mutation {
@@ -72,10 +93,13 @@ type Mutation {
   updateUser(id: String!, data: UpdateUserInput!): CreateUserType!
   deleteUser(id: String!): DeleteUserType!
   login(data: AuthInput!): AuthType!
-  createStore(data: CreateStoreInput!): CreateStoreType!
-  updateStore(id: String!, data: UpdateStoreInput!): CreateStoreType!
-  deleteStore(id: String!): DeleteStoreType!
+  createStore(data: CreateStoreInput!): StoreResponseType!
+  updateStore(id: String!, data: UpdateStoreInput!): StoreResponseType!
+  deleteStore(id: String!): StoreResponseType!
   createProduct(data: CreateProductInput!): Product!
+  createCategory(data: CreateCategoryInput!): CategoryResponseType!
+  updateCategory(id: String!, data: UpdateCategoryInput!): CategoryResponseType!
+  deleteCategory(id: String!): CategoryResponseType!
 }
 
 input CreateUserInput {
@@ -109,4 +133,13 @@ input CreateProductInput {
   sku: Float!
   stock: Float!
   store_id: String!
+}
+
+input CreateCategoryInput {
+  catagory_name: String!
+  store_id: String!
+}
+
+input UpdateCategoryInput {
+  catagory_name: String!
 }

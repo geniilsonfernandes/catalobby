@@ -7,12 +7,15 @@ import { join } from 'path';
 
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
-import { AuthModule } from './auth/auth.module';
+import { Category } from './category/entity';
 import { Product } from './product/product.entity';
-import { ProductModule } from './product/product.module';
-import { Store } from './store/entity/store.entity';
-import { StoreModule } from './store/store.module';
+import { Store } from './store/entity';
 import { User } from './user/entity/user.entity';
+
+import { AuthModule } from './auth/auth.module';
+import { CategoryModule } from './category/category.module';
+import { ProductModule } from './product/product.module';
+import { StoreModule } from './store/store.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -43,7 +46,7 @@ import { UserModule } from './user/user.module';
           username: configService.get<string>('DB_USERNAME'),
           password: configService.get<string>('DB_PASSWORD'),
           database: configService.get<string>('DB_DATABASE'),
-          entities: [User, Store, Product],
+          entities: [User, Store, Product, Category],
           synchronize: true,
           // logging: true,
         };
@@ -60,6 +63,7 @@ import { UserModule } from './user/user.module';
     AuthModule,
     StoreModule,
     ProductModule,
+    CategoryModule,
   ],
   controllers: [],
   providers: [],

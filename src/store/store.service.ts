@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { NotFoundStoreException } from './common/erros/NotFoundStoreException';
 import { StoreAlreadyExistsException } from './common/erros/StoreAlreadyExistsException';
-import { CreateStoreInput } from './dto/store.input';
-import { UpdateStoreInput } from './dto/update-store.input';
-import { Store } from './entity/store.entity';
+
+import { CreateStoreInput, UpdateStoreInput } from './dto';
+import { Store } from './entity';
 
 @Injectable()
 export class StoreService {
@@ -14,10 +15,10 @@ export class StoreService {
     private storeRepository: Repository<Store>,
   ) {}
 
-  async findStoreOrFail(id: string): Promise<Store> {
+  private async findStoreOrFail(id: string): Promise<Store> {
     const store = await this.storeRepository.findOne({
       where: { id },
-      relations: ['admin'],
+      relations: ['categories', 'products', 'user'],
     });
     if (!store) {
       throw new NotFoundStoreException();
@@ -26,12 +27,17 @@ export class StoreService {
     return store;
   }
 
-  private async getUserStore(user_id: string): Promise<Store> {
-    const stores = await this.storeRepository.findOne({
-      where: { admin_id: user_id },
-      relations: ['admin'],
+  async getUserStore(user_id: string): Promise<Store> {
+    const store = await this.storeRepository.findOne({
+      where: {
+        user: {
+          id: user_id,
+        },
+      },
+      relations: ['categories', 'products', 'user'],
     });
-    return stores;
+
+    return store;
   }
 
   async getStoreById(id: string): Promise<Store> {
@@ -47,8 +53,10 @@ export class StoreService {
     }
 
     const newStore = this.storeRepository.create({
-      admin_id: store.user_id,
       store_name: store.store_name,
+      user: {
+        id: store.user_id,
+      },
     });
 
     const savedStore = await this.storeRepository.save(newStore);

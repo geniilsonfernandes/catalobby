@@ -1,5 +1,15 @@
 import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+
+import { Category } from '../category/entity/category.entity';
 import { Store } from '../store/entity/store.entity';
 
 @Entity({ name: 'products' })
@@ -34,6 +44,26 @@ export class Product {
   active: boolean;
 
   @ManyToOne(() => Store, (store) => store.products)
+  @JoinColumn({ name: 'store_id' })
   @HideField()
   store: Store;
+
+  @ManyToOne(() => Category, (category) => category.products)
+  @JoinColumn({ name: 'category_id' })
+  @Field(() => Category, { nullable: true })
+  category: Category;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+    precision: 3,
+  })
+  @Field()
+  created_at: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    precision: 3,
+  })
+  @Field({ nullable: true })
+  updated_at: Date;
 }

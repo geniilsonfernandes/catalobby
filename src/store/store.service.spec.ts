@@ -1,22 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+
+import { MockRepository } from '../__mocks__/MockRepository';
 import { NotFoundStoreException } from './common/erros/NotFoundStoreException';
 import { StoreAlreadyExistsException } from './common/erros/StoreAlreadyExistsException';
-import { TestUltil } from './common/test/TestUltil';
-import { Store } from './entity/store.entity';
+import { Store } from './entity';
 import { StoreService } from './store.service';
+
+const store = {
+  id: '1',
+  store_name: 'store name',
+  admin_id: '1',
+};
 
 describe('StoreService', () => {
   let service: StoreService;
 
-  const mockRepository = {
-    findOne: jest.fn(),
-    find: jest.fn(),
-    create: jest.fn(),
-    save: jest.fn(),
-    update: jest.fn(),
-    remove: jest.fn(),
-  };
+  const mockRepository = new MockRepository();
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -33,21 +33,18 @@ describe('StoreService', () => {
   });
 
   it('should be create a new store', async () => {
-    const store = TestUltil.giveMeAStore();
-    mockRepository.create.mockReturnValue(store);
-    mockRepository.save.mockReturnValue(store);
-
+    mockRepository.findOne.mockReturnValue(null);
     const result = await service.createStore({
       store_name: store.store_name,
       user_id: store.admin_id,
     });
 
+    expect(mockRepository.create).toHaveBeenCalled();
+    expect(mockRepository.save).toHaveBeenCalled();
     expect(result.store_name).toBe(store.store_name);
-    expect(result.admin_id).toBe(store.admin_id);
   });
 
   it('should reject to create if store already exists', async () => {
-    const store = TestUltil.giveMeAStore();
     mockRepository.findOne.mockReturnValue(store);
     await expect(
       service.createStore({
@@ -58,11 +55,9 @@ describe('StoreService', () => {
   });
 
   it('should get a store', async () => {
-    const store = TestUltil.giveMeAStore();
     mockRepository.findOne.mockReturnValue(store);
     const result = await service.getStoreById('1');
     expect(result.store_name).toBe(store.store_name);
-    expect(result.admin_id).toBe(store.admin_id);
   });
 
   it('should not get a store if not exists', async () => {
@@ -73,7 +68,6 @@ describe('StoreService', () => {
   });
 
   it('should update a store', async () => {
-    const store = TestUltil.giveMeAStore();
     mockRepository.findOne.mockReturnValue(store);
     store.store_name = 'new name store';
     mockRepository.save.mockReturnValue(store);
@@ -91,7 +85,6 @@ describe('StoreService', () => {
   });
 
   it('should delete a store', async () => {
-    const store = TestUltil.giveMeAStore();
     mockRepository.findOne.mockReturnValue(store);
     mockRepository.remove.mockReturnValue(store);
     const result = await service.deleteStore(store.id);

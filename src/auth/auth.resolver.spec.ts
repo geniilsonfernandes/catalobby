@@ -50,6 +50,5 @@ describe('AuthResolver', () => {
       token: 'token',
     });
     const result = resolver.login(data);
-    console.log(result);
   });
 });

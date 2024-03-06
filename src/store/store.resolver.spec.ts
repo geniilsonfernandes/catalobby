@@ -1,9 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { TestUltil } from './common/test/TestUltil';
-import { Store } from './entity/store.entity';
+
+import { MockRepository } from '../__mocks__/MockRepository';
+import { Store } from './entity';
 import { StoreResolver } from './store.resolver';
 import { StoreService } from './store.service';
+
+const store = {
+  id: '1',
+  store_name: 'store name',
+  admin_id: '1',
+};
 
 describe('StoreResolver', () => {
   let resolver: StoreResolver;
@@ -15,14 +22,7 @@ describe('StoreResolver', () => {
     deleteStore: jest.fn(),
   };
 
-  const mockRepository = {
-    findOne: jest.fn(),
-    find: jest.fn(),
-    create: jest.fn(),
-    save: jest.fn(),
-    update: jest.fn(),
-    remove: jest.fn(),
-  };
+  const mockRepository = new MockRepository();
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -44,7 +44,6 @@ describe('StoreResolver', () => {
 
   describe('query', () => {
     it('should be find a store by id', async () => {
-      const store = TestUltil.giveMeAStore();
       mockRepository.findOne.mockReturnValue(store);
       mockStoreService.getStoreById.mockReturnValue(store);
       const result = await resolver.store(store.id);
@@ -55,7 +54,6 @@ describe('StoreResolver', () => {
 
   describe('mutations', () => {
     it('should be create a store', async () => {
-      const store = TestUltil.giveMeAStore();
       mockRepository.create.mockReturnValue(store);
       mockRepository.save.mockReturnValue(store);
       mockStoreService.getStoreById.mockReturnValue(store);
@@ -68,7 +66,6 @@ describe('StoreResolver', () => {
     });
 
     it('should be update a store', async () => {
-      const store = TestUltil.giveMeAStore();
       mockRepository.create.mockReturnValue(store);
       mockRepository.save.mockReturnValue(store);
       mockStoreService.getStoreById.mockReturnValue(store);
@@ -80,7 +77,6 @@ describe('StoreResolver', () => {
     });
 
     it('should be delete a store', async () => {
-      const store = TestUltil.giveMeAStore();
       mockRepository.create.mockReturnValue(store);
       mockRepository.save.mockReturnValue(store);
       mockStoreService.getStoreById.mockReturnValue(store);

@@ -26,4 +26,36 @@ export class ProductService {
     const savedProduct = await this.productRepository.save(createdProduct);
     return savedProduct;
   }
+
+  async findAll(store_id: string): Promise<Product[]> {
+    const products = await this.productRepository.find({
+      where: {
+        store: {
+          id: store_id,
+        },
+      },
+    });
+
+    return products;
+  }
+
+  async findOne(id: string): Promise<Product> {
+    const product = await this.productRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+    return product;
+  }
+
+  async deleteProduct(id: string): Promise<void> {
+    const product = await this.findOne(id);
+    await this.productRepository.remove(product);
+  }
+
+  async disableProduct(id: string): Promise<void> {
+    const product = await this.findOne(id);
+    product.active = false;
+    await this.productRepository.update(id, product);
+  }
 }

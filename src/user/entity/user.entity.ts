@@ -4,11 +4,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 import { Store } from '../../store/entity/store.entity';
 
 @Entity({ name: 'users' })
@@ -30,12 +30,7 @@ export class User {
   @Field()
   password: string;
 
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  store_id: string;
-
-  @OneToOne(() => Store, (store) => store.admin_id)
-  @JoinColumn({ name: 'store_id' })
+  @OneToOne(() => Store, (store) => store.user)
   @Field({ nullable: true })
   store: Store;
 
