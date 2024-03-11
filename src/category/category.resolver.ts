@@ -1,5 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import { UseGuards } from '@nestjs/common';
+import { GqlAuthGuard } from '../auth/auth.guard';
 import { CategoryService } from './category.service';
 import {
   CategoryResponseType,
@@ -17,7 +19,7 @@ export class CategoryResolver {
     const result = await this.categoryService.findAll(store_id);
     return result;
   }
-
+  @UseGuards(GqlAuthGuard)
   @Mutation(() => CategoryResponseType)
   async createCategory(
     @Args('data') data: CreateCategoryInput,
@@ -48,12 +50,12 @@ export class CategoryResolver {
     };
   }
 
-  @Mutation(() => CategoryResponseType)
-  async deleteCategory(@Args('id') id: string): Promise<CategoryResponseType> {
-    const result = await this.categoryService.deleteCategory(id);
-    return {
-      message: 'Categoria excluída com sucesso',
-      data: result,
-    };
-  }
+  // @Mutation(() => CategoryResponseType)
+  // async deleteCategory(@Args('id') id: string): Promise<CategoryResponseType> {
+  //   const result = await this.categoryService.deleteCategory(id);
+  //   return {
+  //     message: 'Categoria excluída com sucesso',
+  //     data: result,
+  //   };
+  // }
 }

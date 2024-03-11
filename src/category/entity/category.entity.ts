@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -36,13 +36,13 @@ export class Category {
   @Field({ nullable: true })
   updated_at: Date;
 
-  @ManyToOne(() => Store, (store) => store.categories)
+  @ManyToOne(() => Store, (store) => store.categories, {})
   @JoinColumn({ name: 'store_id' })
-  @Field({ nullable: true })
+  @HideField()
   store: Store;
 
   @OneToMany(() => Product, (product) => product.category)
   @JoinColumn()
-  @Field(() => [Product], { nullable: true })
+  @HideField()
   products: Product[];
 }

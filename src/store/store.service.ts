@@ -35,7 +35,6 @@ export class StoreService {
           id: user_id,
         },
       },
-      relations: ['categories', 'products', 'user'],
     });
 
     return store;

@@ -17,15 +17,21 @@ export class UserService {
   private async findUserOrFail(id: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id },
+      relations: ['store'],
     });
     if (!user) {
       throw new NotFoundUserException('Este usuário não existe');
     }
+    console.log(user);
+
     return user;
   }
 
   async findUserByEmail(email: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { email } });
+    const user = await this.userRepository.findOne({
+      where: { email },
+      relations: ['store'],
+    });
     if (!user) {
       throw new NotFoundUserException('Este usuário não existe');
     }

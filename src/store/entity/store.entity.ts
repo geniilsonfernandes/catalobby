@@ -28,11 +28,15 @@ export class Store {
   @JoinColumn({ name: 'admin_id' })
   user: User;
 
-  @OneToMany(() => Category, (category) => category.store)
+  @OneToMany(() => Category, (category) => category.store, {
+    eager: true,
+  })
   @Field(() => [Category], { nullable: true })
   categories: Category[];
 
-  @OneToMany(() => Product, (product) => product.store)
+  @OneToMany(() => Product, (product) => product.store, {
+    eager: true,
+  })
   @Field(() => [Product], { nullable: true })
   products: Product[];
 

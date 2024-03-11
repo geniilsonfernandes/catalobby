@@ -3,7 +3,6 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { GqlAuthGuard } from '../auth/auth.guard';
 import { CreateUserType } from './common/create-user.type';
-import { DeleteUserType } from './common/delete-user.type';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entity/user.entity';
@@ -44,14 +43,14 @@ export class UserResolver {
     };
   }
 
-  @UseGuards(GqlAuthGuard)
-  @Mutation(() => DeleteUserType, { name: 'deleteUser' })
-  async deleteUser(@Args('id') id: string): Promise<DeleteUserType> {
-    const userDeleted = await this.userService.deleteUser(id);
+  // @UseGuards(GqlAuthGuard)
+  // @Mutation(() => DeleteUserType, { name: 'deleteUser' })
+  // async deleteUser(@Args('id') id: string): Promise<DeleteUserType> {
+  //   const userDeleted = await this.userService.deleteUser(id);
 
-    return {
-      message: 'Usuário excluído com sucesso',
-      data: userDeleted,
-    };
-  }
+  //   return {
+  //     message: 'Usuário excluído com sucesso',
+  //     data: userDeleted,
+  //   };
+  // }
 }

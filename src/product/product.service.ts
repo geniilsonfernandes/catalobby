@@ -45,34 +45,26 @@ export class ProductService {
     return product;
   }
 
-  async getByStore(store_id: string): Promise<Product[]> {
-    const products = await this.productRepository.find({
-      where: {
-        store: {
-          id: store_id,
-        },
-      },
-      relations: ['category', 'store'],
-    });
-    return products;
-  }
-
-  async getByCategory(
-    category_id: string,
+  async getByStore(
     store_id: string,
+    filters?: {
+      category_id?: string;
+    },
   ): Promise<Product[]> {
     const products = await this.productRepository.find({
       where: {
-        category: {
-          id: category_id,
-        },
         store: {
           id: store_id,
         },
+
+        ...(filters?.category_id && {
+          category: {
+            id: filters.category_id,
+          },
+        }),
       },
       relations: ['category', 'store'],
     });
-
     return products;
   }
 

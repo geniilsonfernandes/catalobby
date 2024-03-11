@@ -17,6 +17,16 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Store {
+  id: ID
+  store_name: String
+  categories: [Category!]
+  products: [Product!]
+  created_at: DateTime
+  updated_at: DateTime
+  user: User!
+}
+
 type Product {
   id: ID
   name: String!
@@ -30,23 +40,11 @@ type Product {
   updated_at: DateTime
 }
 
-type Store {
-  id: ID
-  store_name: String
-  categories: [Category!]
-  products: [Product!]
-  created_at: DateTime
-  updated_at: DateTime
-  user: User!
-}
-
 type Category {
   id: ID
   category_name: String!
   created_at: DateTime
   updated_at: DateTime
-  store: Store
-  products: [Product!]
 }
 
 type AuthType {
@@ -76,34 +74,28 @@ type CreateUserType {
   data: User
 }
 
-type DeleteUserType {
-  message: String!
-  data: User
-}
-
 type Query {
   user(id: String!): User!
-  userStore(user_id: String!): Store
   store(id: String!): Store
-  getProductsByCategory(category_id: String!, store_id: String!): [Product!]!
-  getProductById(id: String!): Product!
-  getProducts(store_id: String!): [Product!]!
+  product(id: String!): Product!
+  products(store_id: String!, filters: Filters!): [Product!]!
   categories(store_id: String!): [Category!]!
+}
+
+input Filters {
+  category_id: String
 }
 
 type Mutation {
   createUser(data: CreateUserInput!): CreateUserType!
   updateUser(id: String!, data: UpdateUserInput!): CreateUserType!
-  deleteUser(id: String!): DeleteUserType!
   login(data: AuthInput!): AuthType!
   createStore(data: CreateStoreInput!): StoreResponseType!
   updateStore(id: String!, data: UpdateStoreInput!): StoreResponseType!
-  deleteStore(id: String!): StoreResponseType!
   createProduct(data: CreateProductInput!): Product!
   disableProduct(id: String!): Product!
   createCategory(data: CreateCategoryInput!): CategoryResponseType!
   updateCategory(id: String!, data: UpdateCategoryInput!): CategoryResponseType!
-  deleteCategory(id: String!): CategoryResponseType!
 }
 
 input CreateUserInput {

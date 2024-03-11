@@ -12,12 +12,6 @@ import { StoreService } from './store.service';
 export class StoreResolver {
   constructor(private storeService: StoreService) {}
 
-  @Query(() => Store, { name: 'userStore', nullable: true })
-  async userStore(@Args('user_id') user_id: string): Promise<Store> {
-    const store = await this.storeService.getUserStore(user_id);
-    return store;
-  }
-
   @Query(() => Store, { name: 'store', nullable: true })
   async store(@Args('id') id: string): Promise<Store> {
     const store = await this.storeService.getStoreById(id);
@@ -52,14 +46,14 @@ export class StoreResolver {
     };
   }
 
-  @UseGuards(GqlAuthGuard)
-  @Mutation(() => StoreResponseType, { name: 'deleteStore' })
-  async deleteStore(@Args('id') id: string): Promise<StoreResponseType> {
-    const deletedStore = await this.storeService.deleteStore(id);
+  // @UseGuards(GqlAuthGuard)
+  // @Mutation(() => StoreResponseType, { name: 'deleteStore' })
+  // async deleteStore(@Args('id') id: string): Promise<StoreResponseType> {
+  //   const deletedStore = await this.storeService.deleteStore(id);
 
-    return {
-      message: 'Loja excluída com sucesso',
-      data: deletedStore,
-    };
-  }
+  //   return {
+  //     message: 'Loja excluída com sucesso',
+  //     data: deletedStore,
+  //   };
+  // }
 }
