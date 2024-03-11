@@ -8,7 +8,7 @@ export class CreateCategoryInput {
     message: 'O nome da categoria não pode ser vazio',
   })
   @Field()
-  catagory_name: string;
+  category_name: string;
 
   @IsString()
   @IsNotEmpty({

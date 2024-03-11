@@ -14,7 +14,7 @@ export class ProductService {
 
   async create(product: CreateProductInput): Promise<Product> {
     const createdProduct = this.productRepository.create({
-      name: product.nome,
+      name: product.name,
       description: product.description,
       price: product.price,
       stock: product.stock,

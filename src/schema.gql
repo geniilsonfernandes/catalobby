@@ -42,7 +42,7 @@ type Store {
 
 type Category {
   id: ID
-  catagory_name: String!
+  category_name: String!
   created_at: DateTime
   updated_at: DateTime
   store: Store
@@ -56,7 +56,7 @@ type AuthType {
 
 type CategoryType {
   id: String!
-  catagory_name: String!
+  category_name: String!
   created_at: DateTime!
   updated_at: DateTime!
 }
@@ -131,7 +131,7 @@ input UpdateStoreInput {
 }
 
 input CreateProductInput {
-  nome: String!
+  name: String!
   description: String!
   price: Float!
   sku: Float!
@@ -141,7 +141,7 @@ input CreateProductInput {
 }
 
 input CreateCategoryInput {
-  catagory_name: String!
+  category_name: String!
   store_id: String!
 }
 

@@ -6,7 +6,7 @@ class CategoryType {
   id: string;
 
   @Field()
-  catagory_name: string;
+  category_name: string;
 
   @Field()
   created_at: Date;

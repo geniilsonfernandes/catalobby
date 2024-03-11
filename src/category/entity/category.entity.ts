@@ -22,7 +22,7 @@ export class Category {
 
   @Column({ length: 255 })
   @Field()
-  catagory_name: string;
+  category_name: string;
 
   @CreateDateColumn({
     type: 'timestamp',

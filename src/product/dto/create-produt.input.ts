@@ -8,7 +8,7 @@ export class CreateProductInput {
     message: 'O nome do produto deve ser informado',
   })
   @Field()
-  nome: string;
+  name: string;
 
   @IsString()
   @IsNotEmpty({

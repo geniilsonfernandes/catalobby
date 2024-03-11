@@ -26,7 +26,7 @@ export class CategoryService {
 
   async createCategory(data: CreateCategoryInput): Promise<Category> {
     const newCategory = this.categoryRepository.create({
-      catagory_name: data.catagory_name,
+      category_name: data.category_name,
       store: {
         id: data.store_id,
       },

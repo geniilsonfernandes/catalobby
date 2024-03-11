@@ -23,7 +23,7 @@ export class CategoryResolver {
     @Args('data') data: CreateCategoryInput,
   ): Promise<CategoryResponseType> {
     const result = await this.categoryService.createCategory({
-      catagory_name: data.catagory_name,
+      category_name: data.category_name,
       store_id: data.store_id,
     });
 
@@ -39,7 +39,7 @@ export class CategoryResolver {
     @Args('data') data: UpdateCategoryInput,
   ): Promise<CategoryResponseType> {
     const result = await this.categoryService.updateCategory(id, {
-      catagory_name: data.catagory_name,
+      category_name: data.catagory_name,
     });
 
     return {
