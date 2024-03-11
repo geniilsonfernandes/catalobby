@@ -10,8 +10,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Product } from '../../product/product.entity';
-import { Store } from '../../store/entity/store.entity';
+import { Product } from '../../product/entity';
+import { Store } from '../../store/entity';
 
 @Entity({ name: 'categories' })
 @ObjectType()

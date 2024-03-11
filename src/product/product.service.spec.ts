@@ -1,29 +1,26 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Product } from './product.entity';
+
+import { MockRepository } from '../__mocks__/MockRepository';
+import { NotFoundProductException } from './common/erros';
+import { CreateProductInput } from './dto';
+import { Product } from './entity';
 import { ProductService } from './product.service';
 
 const product = {
-  id: '1',
-  title: 'test',
-  description: 'test',
-  price: 1,
-  sku: 1,
-  stock: 1,
+  category_id: '1',
   store_id: '1',
-};
+  description: 'test',
+  nome: 'test',
+  price: 1340,
+  sku: 12349,
+  stock: 10,
+} as CreateProductInput;
 
 describe('ProductService', () => {
   let service: ProductService;
 
-  const mockRepository = {
-    findOne: jest.fn(),
-    find: jest.fn(),
-    create: jest.fn(),
-    save: jest.fn(),
-    update: jest.fn(),
-    remove: jest.fn(),
-  };
+  const mockRepository = new MockRepository();
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -40,33 +37,51 @@ describe('ProductService', () => {
   });
 
   it('should be create a new product', async () => {
-    mockRepository.create.mockReturnValue(product);
-    mockRepository.save.mockReturnValue(product);
-    const result = await service.create(product);
-    expect(result).toEqual(product);
+    await service.create(product);
+    expect(mockRepository.create).toHaveBeenCalled();
+    expect(mockRepository.save).toHaveBeenCalled();
   });
 
-  it('should be find all products', async () => {
+  it('should be get products by store', async () => {
     mockRepository.find.mockReturnValue([product]);
-    const result = await service.findAll('1');
-    expect(result).toEqual([product]);
+    const products = await service.getByStore('1');
+
+    expect(mockRepository.find).toHaveBeenCalled();
+    expect(products.length).toBe(1);
   });
 
-  it('should be find a product', async () => {
-    mockRepository.findOne.mockReturnValue(product);
-    const result = await service.findOne('1');
-    expect(result).toEqual(product);
-  });
+  it('should not get products by store if not exists', async () => {
+    mockRepository.find.mockReturnValue([]);
+    const products = await service.getByStore('1');
 
-  it('should be delete a product', async () => {
-    mockRepository.remove.mockReturnValue(product);
-    await service.deleteProduct('1');
-    expect(mockRepository.remove).toHaveBeenCalled();
+    expect(mockRepository.find).toHaveBeenCalled();
+    expect(products.length).toBe(0);
   });
 
   it('should be disable a product', async () => {
-    mockRepository.update.mockReturnValue(product);
-    await service.disableProduct('1');
-    expect(mockRepository.update).toHaveBeenCalled();
+    const product = await service.disable('1');
+    expect(product.active).toBe(false);
+
+    expect(mockRepository.save).toHaveBeenCalled();
+  });
+
+  it('should not be disable a product if not exists', async () => {
+    mockRepository.findOne.mockReturnValue(null);
+    await expect(service.disable('1')).rejects.toBeInstanceOf(
+      NotFoundProductException,
+    );
+  });
+
+  it('should be enable a product', async () => {
+    const product = await service.enable('1');
+    expect(product.active).toBe(true);
+    expect(mockRepository.save).toHaveBeenCalled();
+  });
+
+  it('should not be enable a product if not exists', async () => {
+    mockRepository.findOne.mockReturnValue(null);
+    await expect(service.enable('1')).rejects.toBeInstanceOf(
+      NotFoundProductException,
+    );
   });
 });

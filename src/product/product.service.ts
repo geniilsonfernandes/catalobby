@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateProductInput } from './dto/create-produt.input';
-import { Product } from './product.entity';
+
+import { NotFoundProductException } from './common/erros';
+import { CreateProductInput } from './dto';
+import { Product } from './entity';
 
 @Injectable()
 export class ProductService {
@@ -12,7 +14,7 @@ export class ProductService {
 
   async create(product: CreateProductInput): Promise<Product> {
     const createdProduct = this.productRepository.create({
-      title: product.title,
+      name: product.nome,
       description: product.description,
       price: product.price,
       stock: product.stock,
@@ -21,41 +23,68 @@ export class ProductService {
       store: {
         id: product.store_id,
       },
+      category: {
+        id: product.category_id,
+      },
     });
 
     const savedProduct = await this.productRepository.save(createdProduct);
     return savedProduct;
   }
 
-  async findAll(store_id: string): Promise<Product[]> {
+  async getProductById(id: string): Promise<Product> {
+    const product = await this.productRepository.findOne({
+      where: { id },
+      relations: ['category', 'store'],
+    });
+
+    if (!product) {
+      throw new NotFoundProductException();
+    }
+
+    return product;
+  }
+
+  async getByStore(store_id: string): Promise<Product[]> {
     const products = await this.productRepository.find({
       where: {
         store: {
           id: store_id,
         },
       },
+      relations: ['category', 'store'],
+    });
+    return products;
+  }
+
+  async getByCategory(
+    category_id: string,
+    store_id: string,
+  ): Promise<Product[]> {
+    const products = await this.productRepository.find({
+      where: {
+        category: {
+          id: category_id,
+        },
+        store: {
+          id: store_id,
+        },
+      },
+      relations: ['category', 'store'],
     });
 
     return products;
   }
 
-  async findOne(id: string): Promise<Product> {
-    const product = await this.productRepository.findOne({
-      where: {
-        id: id,
-      },
-    });
-    return product;
-  }
-
-  async deleteProduct(id: string): Promise<void> {
-    const product = await this.findOne(id);
-    await this.productRepository.remove(product);
-  }
-
-  async disableProduct(id: string): Promise<void> {
-    const product = await this.findOne(id);
+  async disable(id: string): Promise<Product> {
+    const product = await this.getProductById(id);
     product.active = false;
-    await this.productRepository.update(id, product);
+    return await this.productRepository.save(product);
+  }
+
+  async enable(id: string): Promise<Product> {
+    const product = await this.getProductById(id);
+    product.active = true;
+    return await this.productRepository.save(product);
   }
 }

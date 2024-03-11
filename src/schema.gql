@@ -19,7 +19,7 @@ scalar DateTime
 
 type Product {
   id: ID
-  title: String!
+  name: String!
   description: String!
   price: Float!
   sku: Float!
@@ -85,6 +85,9 @@ type Query {
   user(id: String!): User!
   userStore(user_id: String!): Store
   store(id: String!): Store
+  getProductsByCategory(category_id: String!, store_id: String!): [Product!]!
+  getProductById(id: String!): Product!
+  getProducts(store_id: String!): [Product!]!
   categories(store_id: String!): [Category!]!
 }
 
@@ -97,6 +100,7 @@ type Mutation {
   updateStore(id: String!, data: UpdateStoreInput!): StoreResponseType!
   deleteStore(id: String!): StoreResponseType!
   createProduct(data: CreateProductInput!): Product!
+  disableProduct(id: String!): Product!
   createCategory(data: CreateCategoryInput!): CategoryResponseType!
   updateCategory(id: String!, data: UpdateCategoryInput!): CategoryResponseType!
   deleteCategory(id: String!): CategoryResponseType!
@@ -127,12 +131,13 @@ input UpdateStoreInput {
 }
 
 input CreateProductInput {
-  title: String!
+  nome: String!
   description: String!
   price: Float!
   sku: Float!
   stock: Float!
   store_id: String!
+  category_id: String!
 }
 
 input CreateCategoryInput {

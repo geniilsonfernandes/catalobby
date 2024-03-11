@@ -20,6 +20,7 @@ export class StoreService {
       where: { id },
       relations: ['categories', 'products', 'user'],
     });
+
     if (!store) {
       throw new NotFoundStoreException();
     }

@@ -8,7 +8,7 @@ import { join } from 'path';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { Category } from './category/entity';
-import { Product } from './product/product.entity';
+import { Product } from './product/entity/product.entity';
 import { Store } from './store/entity';
 import { User } from './user/entity/user.entity';
 

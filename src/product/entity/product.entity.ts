@@ -9,8 +9,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Category } from '../category/entity/category.entity';
-import { Store } from '../store/entity/store.entity';
+import { Category } from '../../category/entity/category.entity';
+import { Store } from '../../store/entity/store.entity';
 
 @Entity({ name: 'products' })
 @ObjectType()
@@ -21,7 +21,7 @@ export class Product {
 
   @Column({ length: 255 })
   @Field()
-  title: string;
+  name: string;
 
   @Column('text')
   @Field()
@@ -48,7 +48,7 @@ export class Product {
   @HideField()
   store: Store;
 
-  @ManyToOne(() => Category, (category) => category.products)
+  @ManyToOne(() => Category, (category) => category.products, { eager: true })
   @JoinColumn({ name: 'category_id' })
   @Field(() => Category, { nullable: true })
   category: Category;
