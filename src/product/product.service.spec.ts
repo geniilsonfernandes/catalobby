@@ -11,7 +11,7 @@ const product = {
   category_id: '1',
   store_id: '1',
   description: 'test',
-  nome: 'test',
+  name: 'test',
   price: 1340,
   sku: 12349,
   stock: 10,
